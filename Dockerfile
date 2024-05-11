@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 golang:1.23
+FROM --platform=linux/amd64 golang:1.22
 WORKDIR /app
 COPY . /app
 RUN go mod download  
