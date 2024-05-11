@@ -16,6 +16,23 @@ env:
   GCP_REGION: us-west1
   IMAGE: asia.gcr.io/${{ secrets.PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
 jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.16"
+
+      - name: Build
+        run: go build -v .
+
+      - name: Test
+        run: go test -v .
+
   deploy-to-cloud-run:
     runs-on: ubuntu-latest
     steps:
