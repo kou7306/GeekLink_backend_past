@@ -1,8 +1,8 @@
-FROM golang:1.20.4
+FROM golang:1.22.1
 
 WORKDIR /app
 
-COPY ./src /app
+COPY . /app
 
 RUN go mod download
 
