@@ -35,7 +35,7 @@ jobs:
         run: docker build -t giiku5 .
 
       - name: Push the docker image
-        run: docker push giiku5
+        run: docker push kou7306/giiku5
 
       - name: Deploy to Cloud Run
         run: |
