@@ -28,6 +28,9 @@ jobs:
       - name: Configure docker to use the gcloud cli
         run: gcloud auth configure-docker --quiet
 
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u kou7306 --password-stdin
+
       - name: Build a docker image
         run: docker build -t go-app .
 
