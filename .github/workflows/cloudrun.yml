@@ -32,10 +32,10 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u kou7306 --password-stdin
 
       - name: Build a docker image
-        run: docker build -t go-app .
+        run: docker build -t giiku5 .
 
       - name: Push the docker image
-        run: docker push go-app
+        run: docker push giiku5
 
       - name: Deploy to Cloud Run
         run: |
