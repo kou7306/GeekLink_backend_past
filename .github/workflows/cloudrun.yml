@@ -32,4 +32,3 @@ jobs:
       - name: Run Go tests
         run: |
           go test
-          d830ea3
