@@ -1,49 +1,48 @@
 package domain
 
 import (
-	"encoding/json"
 	"log"
 
 	"github.com/gorilla/websocket"
 )
 
-type Message struct {
-    Text string `json:"text"`
-}
-
+// クライアントの定義
 type Client struct {
 	ws     *websocket.Conn
-	sendCh chan Message
+	sendCh chan []byte
 }
 
+// クライアントを作る関数
 func NewClient(ws *websocket.Conn) *Client {
 	return &Client{
 		ws:     ws,
-		sendCh: make(chan Message),
+		sendCh: make(chan []byte),
 	}
 }
 
-func (c *Client) ReadLoop(broadCast chan<- Message, unregister chan<- *Client) {
+// クライアントの読み取りループ
+func (c *Client) ReadLoop(broadCast chan<- []byte, unregister chan<- *Client) {
     defer func() {
+		
         c.disconnect(unregister)
     }()
 
     for {
-        _, jsonMsg, err := c.ws.ReadMessage()
-        if err != nil {
-            if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-                log.Printf("unexpected close error: %v", err)
-            }
-            break
-        }
+		_, p, err := c.ws.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("unexpected close error: %v", err)
+			}
 
-        var message Message
-        if err := json.Unmarshal(jsonMsg, &message); err != nil {
-            log.Printf("error decoding message: %v", err)
-            continue
-        }
+			log.Printf("defer")
+			break
+		}
 
-        broadCast <- message
+		// 受信したメッセージをログに出力する
+		log.Printf("recv: %s", p)
+		broadCast <- p
+
+
     }
 }
 
@@ -58,18 +57,15 @@ func (c *Client) WriteLoop() {
 	for {
 		message := <-c.sendCh
 
-		jsonMsg, err := json.Marshal(message)
-		if err != nil {
-			log.Printf("error encoding message: %v", err)
-			continue
-		}
+		log.Printf("message: %s", message)
+
 
 		w, err := c.ws.NextWriter(websocket.TextMessage)
 		if err != nil {
 			log.Printf("error getting next writer: %v", err)
 			return
 		}
-		w.Write(jsonMsg)
+		w.Write(message)
 
 		if err := w.Close(); err != nil {
 			log.Printf("error closing writer: %v", err)
