@@ -2,23 +2,21 @@ package main
 
 import (
 	"fmt"
+	"giiku5/domain"
+	"giiku5/websocket"
+	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
-func handler(c *gin.Context) {
-	c.String(http.StatusOK, "Hello, world!")
-}
-
 func main() {
-	router := gin.Default()
+	hub := domain.NewHub()
+	go hub.RunLoop()
 
-	fmt.Println("Starting server on port 8080...")
-
-	router.GET("/", handler)
-
-	if err := router.Run(":8080"); err != nil {
-		fmt.Printf("Error starting server: %s\n", err)
+	http.HandleFunc("/ws", websocket.NewWebsocketHandler(hub).Handle)
+	http.Handle("/", http.FileServer(http.Dir("./public")))
+	port := "8080"
+	log.Printf("Listening on port %s", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
+		log.Panicln("Serve Error:", err)
 	}
 }
