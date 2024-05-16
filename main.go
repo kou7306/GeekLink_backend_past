@@ -1,24 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"giiku5/controller"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func handler(c *gin.Context) {
-	c.String(http.StatusOK, "Hello, world!")
-}
-
 func main() {
 	router := gin.Default()
 
-	fmt.Println("Starting server on port 8080...")
+	router.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello world")
+	})
 
-	router.GET("/", handler)
+	router.GET("/random-match", controller.Random_Match)
 
-	if err := router.Run(":8080"); err != nil {
-		fmt.Printf("Error starting server: %s\n", err)
-	}
+	router.Run(":8080")
 }
