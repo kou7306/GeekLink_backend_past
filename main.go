@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log
+	"log"
 	"giiku5/controller"
 	"net/http"
 
