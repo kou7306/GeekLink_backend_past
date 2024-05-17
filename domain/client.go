@@ -7,6 +7,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type ClientWithConversationId struct{
+	Client *Client
+	ConversationId string
+}
+
+
 // クライアントの定義
 type Client struct {
 	ws     *websocket.Conn
@@ -21,15 +27,22 @@ func NewClient(ws *websocket.Conn) *Client {
 	}
 }
 
+func NewClientWithConversationId(ws *websocket.Conn, conversationId string) *ClientWithConversationId {
+	return &ClientWithConversationId{
+		Client: NewClient(ws),
+		ConversationId: conversationId,
+	}
+}
+
 // クライアントの読み取りループ
-func (c *Client) ReadLoop(broadCast chan<- *Message, unregister chan<- *Client) {
+func (c *ClientWithConversationId) ReadLoop(broadCast chan<- *Message, unregister chan<- *ClientWithConversationId) {
     defer func() {
 		
         c.disconnect(unregister)
     }()
 
     for {
-		_, p, err := c.ws.ReadMessage()
+		_, p, err := c.Client.ws.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("unexpected close error: %v", err)
@@ -58,18 +71,18 @@ func (c *Client) ReadLoop(broadCast chan<- *Message, unregister chan<- *Client) 
 
 
 
-func (c *Client) WriteLoop() {
+func (c *ClientWithConversationId) WriteLoop() {
 	defer func() {
-		c.ws.Close()
+		c.Client.ws.Close()
 	}()
 
 	for {
-		message := <-c.sendCh
+		message := <-c.Client.sendCh
 
 		log.Printf("message: %s", message)
 
 
-		w, err := c.ws.NextWriter(websocket.TextMessage)
+		w, err := c.Client.ws.NextWriter(websocket.TextMessage)
 		if err != nil {
 			log.Printf("error getting next writer: %v", err)
 			return
@@ -89,7 +102,7 @@ func (c *Client) WriteLoop() {
 }
 
 
-func (c *Client) disconnect(unregister chan<- *Client) {
+func (c *ClientWithConversationId) disconnect(unregister chan<- *ClientWithConversationId) {
 	unregister <- c
-	c.ws.Close()
+	c.Client.ws.Close()
 }

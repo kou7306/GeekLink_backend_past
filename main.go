@@ -16,6 +16,9 @@ type WebsocketHandler struct {
 	hub *domain.Hub
 }
 
+
+
+
 func NewWebsocketHandler(hub *domain.Hub) *WebsocketHandler {
 	return &WebsocketHandler{
 		hub: hub,
@@ -32,6 +35,8 @@ var upgrader = websocket.Upgrader{
 }
 
 func (wh *WebsocketHandler) handleWebSocket(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+    conversationId := vars["conversationId"]
     // WebSocket接続をアップグレードする
     conn, err := upgrader.Upgrade(w, r, nil)
     if err != nil {
@@ -39,7 +44,7 @@ func (wh *WebsocketHandler) handleWebSocket(w http.ResponseWriter, r *http.Reque
         return
     }
 
-	client := domain.NewClient(conn)
+	client := domain.NewClientWithConversationId(conn,conversationId)
 	go client.ReadLoop(wh.hub.BroadcastCh, wh.hub.UnRegisterCh)
 	go client.WriteLoop()
 	wh.hub.RegisterCh <- client

@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+
+
 type Message struct {
 	Id *string `json:"id,omitempty"`
 	SenderId string `json:"sender_id"`
@@ -17,17 +19,17 @@ type Message struct {
 
 // 入退室の管理
 type Hub struct {
-	Clients      map[*Client]bool
-	RegisterCh   chan *Client
-	UnRegisterCh chan *Client
+	Clients      map[*Client]string
+	RegisterCh   chan *ClientWithConversationId
+	UnRegisterCh chan *ClientWithConversationId
 	BroadcastCh  chan *Message
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		Clients:      make(map[*Client]bool),
-		RegisterCh:   make(chan *Client),
-		UnRegisterCh: make(chan *Client),
+		Clients:      make(map[*Client]string),
+		RegisterCh:   make(chan *ClientWithConversationId),
+		UnRegisterCh: make(chan *ClientWithConversationId),
 		BroadcastCh:  make(chan *Message),
 	}
 }
@@ -51,13 +53,13 @@ func (h *Hub) RunLoop() {
 }
 
 
-func (h *Hub) register(c *Client) {
-	h.Clients[c] = true
+func (h *Hub) register(c *ClientWithConversationId) {
+	h.Clients[c.Client] = c.ConversationId
 	log.Printf("clients: %v", h.Clients)
 }
 
-func (h *Hub) unregister(c *Client) {
-	delete(h.Clients, c)
+func (h *Hub) unregister(c *ClientWithConversationId) {
+	delete(h.Clients, c.Client)
 }
 
 func (h *Hub) broadCastToAllClient(msg *Message) {
@@ -98,7 +100,10 @@ func (h *Hub) broadCastToAllClient(msg *Message) {
 	log.Printf("Broadcast message saved: %+v", row)
 
 	// クライアントにメッセージを送信する
-	for c := range h.Clients {
-		c.sendCh <- msg
+	// クライアントにメッセージを送信する
+	for c, conversationId := range h.Clients {
+		if conversationId == msg.ConversationID {
+			c.sendCh <- msg
+		}
 	}
 }
