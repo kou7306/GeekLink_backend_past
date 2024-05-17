@@ -15,6 +15,8 @@ env:
   GCP_PROJECT_ID: ${{ secrets.PROJECT_ID }}
   GCP_REGION: us-west1
   IMAGE: kou7306/giiku5:${{ github.sha }}
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -76,3 +78,4 @@ jobs:
             --platform=managed \
             --allow-unauthenticated \
             --quiet \
+            --set-env-vars SUPABASE_URL=$SUPABASE_URL,SUPABASE_KEY=$SUPABASE_KEY
