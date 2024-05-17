@@ -1,17 +1,16 @@
 package controller
 
 import (
-	"giiku5/api"
+	"encoding/json"
 	"giiku5/model"
+	"giiku5/supabase"
 	"math/rand"
 	"net/http"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
-func Random_Match(c *gin.Context) {
-	supabase := api.SupabaseClient()
+func Random_Match(w http.ResponseWriter, r *http.Request) {
+	supabase, _ := supabase.GetClient()
 
 	// 自分のidを除外するため, 一旦固定の値に
 	my_user_id := "2"
@@ -22,7 +21,7 @@ func Random_Match(c *gin.Context) {
 
 	err := supabase.DB.From("users").Select("*").Filter("user_id", "neq", my_user_id).Execute(&users)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -40,5 +39,5 @@ func Random_Match(c *gin.Context) {
 		users = append(users[:index], users[index+1:]...)
 	}
 
-	c.JSON(http.StatusOK, random_users)
+	json.NewEncoder(w).Encode(random_users)
 }
