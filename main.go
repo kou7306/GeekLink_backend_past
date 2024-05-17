@@ -25,17 +25,7 @@ func NewWebsocketHandler(hub *domain.Hub) *WebsocketHandler {
 		hub: hub,
 	}
   
-func main() {
-	router := gin.Default()
 
-	router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello world")
-	})
-
-	router.GET("/random-match", controller.Random_Match)
-
-	router.Run(":8080")
-}
 
 var upgrader = websocket.Upgrader{
     ReadBufferSize:  1024,
