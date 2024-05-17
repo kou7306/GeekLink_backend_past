@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/gorilla/websocket"
@@ -9,19 +10,19 @@ import (
 // クライアントの定義
 type Client struct {
 	ws     *websocket.Conn
-	sendCh chan []byte
+	sendCh chan *Message
 }
 
 // クライアントを作る関数
 func NewClient(ws *websocket.Conn) *Client {
 	return &Client{
 		ws:     ws,
-		sendCh: make(chan []byte),
+		sendCh: make(chan *Message),
 	}
 }
 
 // クライアントの読み取りループ
-func (c *Client) ReadLoop(broadCast chan<- []byte, unregister chan<- *Client) {
+func (c *Client) ReadLoop(broadCast chan<- *Message, unregister chan<- *Client) {
     defer func() {
 		
         c.disconnect(unregister)
@@ -38,9 +39,17 @@ func (c *Client) ReadLoop(broadCast chan<- []byte, unregister chan<- *Client) {
 			break
 		}
 
+		// 受信したメッセージを *Message 型に変換する
+		var message Message
+		if err := json.Unmarshal(p, &message); err != nil {
+			log.Printf("error unmarshalling message: %v", err)
+			continue
+		}
+
+
 		// 受信したメッセージをログに出力する
 		log.Printf("recv: %s", p)
-		broadCast <- p
+		broadCast <- &message
 
 
     }
@@ -65,7 +74,12 @@ func (c *Client) WriteLoop() {
 			log.Printf("error getting next writer: %v", err)
 			return
 		}
-		w.Write(message)
+		data, err := json.Marshal(message)
+		if err != nil {
+			log.Printf("error marshalling message: %v", err)
+			return
+		}
+		w.Write(data)
 
 		if err := w.Close(); err != nil {
 			log.Printf("error closing writer: %v", err)

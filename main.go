@@ -4,8 +4,11 @@ import (
 	"log"
 	"net/http"
 
+	"giiku5/api"
 	"giiku5/domain"
 
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -35,30 +38,6 @@ func (wh *WebsocketHandler) handleWebSocket(w http.ResponseWriter, r *http.Reque
         log.Println("upgrade error:", err)
         return
     }
-	//
-
-
-
-
-	//
-    // for {
-    //     // クライアントからのメッセージを読み取る
-	// 	messageType, p, err := conn.ReadMessage()
-	// 	if err != nil {
-	// 		log.Println("read error:", err)
-	// 		return
-	// 	}
-
-	// 	// 受信したメッセージをログに出力する
-	// 	log.Printf("recv: %s", p)
-	// 	wh.hub.BroadcastCh <- p
-
-	// 	// クライアントにメッセージを返信する
-	// 	if err := conn.WriteMessage(messageType, p); err != nil {
-	// 		log.Println("write error:", err)
-	// 		return
-	// 	}
-    // }
 
 	client := domain.NewClient(conn)
 	go client.ReadLoop(wh.hub.BroadcastCh, wh.hub.UnRegisterCh)
@@ -69,7 +48,15 @@ func (wh *WebsocketHandler) handleWebSocket(w http.ResponseWriter, r *http.Reque
 func main() {
 	hub := domain.NewHub()
 	go hub.RunLoop()
-    http.HandleFunc("/ws", NewWebsocketHandler(hub).handleWebSocket)
+	r := mux.NewRouter()
+	r.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
+    r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
     log.Println("WebSocket server started on localhost:8080")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    // CORS設定
+    headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+    originsOk := handlers.AllowedOrigins([]string{"*"})
+    methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+    // サーバー起動
+    http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(r))
 }
