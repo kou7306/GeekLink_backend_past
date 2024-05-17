@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"giiku5/controller"
 	"net/http"
 
 	"giiku5/api"
@@ -24,7 +23,7 @@ func NewWebsocketHandler(hub *domain.Hub) *WebsocketHandler {
 	return &WebsocketHandler{
 		hub: hub,
 	}
-  
+}
 
 
 var upgrader = websocket.Upgrader{
