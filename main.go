@@ -18,7 +18,6 @@ type WebsocketHandler struct {
 }
 
 
-
 func NewWebsocketHandler(hub *domain.Hub) *WebsocketHandler {
 	return &WebsocketHandler{
 		hub: hub,

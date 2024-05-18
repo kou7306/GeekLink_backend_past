@@ -23,7 +23,7 @@ type User struct {
 	Age string `json:"age"`
 	Place string `json:"place"`
 	Occupation string `json:occupation"`
-	techs []string `json:"techs"`
+	Techs []string `json:"techs"`
 	TopTechs []string `json:"topTechs"`
 	Image_url string `json:" image_url"`
   Hobby string `json:"hobby"`
@@ -54,7 +54,7 @@ func updateUser(c *gin.Context) {
 		return
 	}
 
-	userID := req.ID
+	userID := req.Auth_id
 	if userID == "" {
 		  c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
 			return
@@ -67,9 +67,9 @@ func updateUser(c *gin.Context) {
 	}
 
 	var existingUser User
-	err := client.DB.From("users").Select("name", "hobby").Eq("id", userID).Single(&existingUser)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	err1 := client.DB.From("users").Select("name", "hobby").Eq("id", userID).Single(&existingUser)
+	if err1 != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err1.Error()})
 		return
 	}
 
@@ -117,10 +117,10 @@ func updateUser(c *gin.Context) {
 	if updatedData.Occupation == "" {
 		updatedData.Occupation = existingUser.Occupation
 	}
-	if updatedData.Techs == "" {
+	if len(updatedData.Techs) == 0 {
 		updatedData.Techs = existingUser.Techs
 	}
-	if updatedData.TopTechs == "" {
+	if len(updatedData.TopTechs) == 0 {
 		updatedData.TopTechs = existingUser.TopTechs
 	}
 	if updatedData.Image_url == "" {
@@ -132,7 +132,7 @@ func updateUser(c *gin.Context) {
 	if updatedData.Affiliation == "" {
 		updatedData.Affiliation = existingUser.Affiliation
 	}
-	if updatedData.Qualification == "" {
+	if len(updatedData.Qualification) == 0 {
 		updatedData.Qualification = existingUser.Qualification
 	}
 	if updatedData.Message == "" {
@@ -150,7 +150,7 @@ func updateUser(c *gin.Context) {
 	if updatedData.Faculty == "" {
 		updatedData.Faculty = existingUser.Faculty
 	}
-	if updatedData.Experience == "" {
+	if len(updatedData.Experience) == 0 {
 		updatedData.Experience = existingUser.Experience
 	}
 	if updatedData.Github == "" {
@@ -170,9 +170,9 @@ func updateUser(c *gin.Context) {
 	}
 	
 	var results map[string]interface{}
-	err := client.DB.From("users").Update(updatedData).Eq("id", userID).Execute(&results)
-	if err != nil {
-		  c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	err2 := client.DB.From("users").Update(updatedData).Eq("id", userID).Execute(&results)
+	if err2 != nil {
+		  c.JSON(http.StatusInternalServerError, gin.H{"error": err2.Error()})
 			return
 	}
 
