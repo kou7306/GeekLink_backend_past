@@ -3,8 +3,7 @@ package model
 import "time"
 
 type User struct {
-	UserID            int       `json:"user_id"`
-	AuthID            string    `json:"auth_id"`
+	UserID            string    `json:"user_id"`
 	Name              string    `json:"name"`               // 名前
 	Sex               string    `json:"sex"`                // 性別
 	Age               int       `json:"age"`                // 年齢
@@ -42,7 +41,7 @@ type TopUserResponse struct {
 
 // ランダムマッチングで返すユーザー情報
 type UserRandomResponse struct {
-	UserID     int      `json:"user_id"`
+	UserID     string   `json:"user_id"`
 	Name       string   `json:"name"`
 	Sex        string   `json:"sex"`
 	Age        int      `json:"age"`
@@ -54,7 +53,7 @@ type UserRandomResponse struct {
 
 // メッセージ一覧で返すユーザー情報
 type MessageUserResponse struct {
-	UserID    int      `json:"user_id"`
+	UserID    string   `json:"user_id"`
 	Name      string   `json:"name"`
 	Sex       string   `json:"sex"`
 	Age       int      `json:"age"`
