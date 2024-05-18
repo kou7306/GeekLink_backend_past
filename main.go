@@ -54,6 +54,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
 	r.HandleFunc("/getMatchingUser", api.GetMatchingUser).Methods("POST")
+    r.HandleFunc("/getUserData", api.GetUserData).Methods("POST")
 	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
 	r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
 	log.Println("WebSocket server started on localhost:8080")
