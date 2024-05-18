@@ -43,8 +43,8 @@ type User struct {
 }
 
 func updateUser(c *gin.Context) {
-	supabaseUrl := ""
-	supabaseKey := ""
+	supabaseUrl := "https://xyzjdfnpypknqjmiolzt.supabase.co"
+	supabaseKey := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5empkZm5weXBrbnFqbWlvbHp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUwNTEwMzQsImV4cCI6MjAzMDYyNzAzNH0.V4lk56W0UuJBJkXTMxNRMcdkFNdbwaimBmbf1vlrDI8"
 	client := supa.CreateClient(supabaseUrl, supabaseKey)
 
 	var req User
