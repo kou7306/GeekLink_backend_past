@@ -5,14 +5,23 @@ import (
 	"giiku5/model"
 	"giiku5/supabase"
 	"log"
-	"strconv"
+
+	"github.com/google/uuid"
 )
 
 // ユーザーがマッチングしているか確認(互いにいいねしているか)
 func MatchingCheck() {
 	// 仮置き. 自身のIDと相手のIDの取得方法分かり次第修正.
-	my_user_id := 1
-	other_user_id := 2
+	my_user_id, id_err := uuid.Parse("")
+	if id_err != nil {
+		fmt.Println(id_err)
+		return
+	}
+	other_user_id, other_id_err := uuid.Parse("")
+	if other_id_err != nil {
+		fmt.Println(other_id_err)
+		return
+	}
 
 	// 片方のユーザーでチェック
 	var filtered_Likes []model.Like
@@ -31,17 +40,17 @@ func MatchingCheck() {
 	fmt.Println(len(filtered_Likes), len(filtered_other_Likes))
 	if len(filtered_Likes) == 1 && len(filtered_other_Likes) == 1 {
 		fmt.Println("success")
-		// CreateMatching(my_user_id, other_user_id)
-		// DeleteLike(row_id, other_row_id)
+		CreateMatching(my_user_id, other_user_id)
+		DeleteLike(row_id, other_row_id)
 	}
 }
 
 // 自分のいいねした人の中から特定のユーザーをいいねしているかフィルターする
-func FilterLikes(user_id int, other_user_id int) ([]model.Like, int) {
+func FilterLikes(user_id uuid.UUID, other_user_id uuid.UUID) ([]model.Like, int) {
 	supabase, _ := supabase.GetClient()
 
 	var likes []model.Like
-	err := supabase.DB.From("likes").Select("*").Eq("user_id", strconv.Itoa(user_id)).Execute(&likes)
+	err := supabase.DB.From("likes").Select("*").Eq("user_id", user_id.String()).Execute(&likes)
 	if err != nil {
 		log.Printf("Error: %v", err)
 		return []model.Like{}, 0
@@ -63,7 +72,7 @@ func FilterLikes(user_id int, other_user_id int) ([]model.Like, int) {
 }
 
 // ユーザーがマッチングしていたら呼び出す. マッチングIDを発行
-func CreateMatching(user1_id int, user2_id int) {
+func CreateMatching(user1_id uuid.UUID, user2_id uuid.UUID) {
 	supabase, _ := supabase.GetClient()
 
 	match := model.CreateMatch{

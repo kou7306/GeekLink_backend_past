@@ -5,6 +5,8 @@ import (
 	"giiku5/model"
 	"giiku5/supabase"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 // いいね情報をデータベースに挿入
@@ -12,8 +14,16 @@ func CreateLike() {
 	supabase, _ := supabase.GetClient()
 
 	// 仮置き. 自身のIDと相手のIDの取得方法分かり次第修正.
-	my_user_id := 1
-	other_user_id := 2
+	my_user_id, id_err := uuid.Parse("")
+	if id_err != nil {
+		fmt.Println(id_err)
+		return
+	}
+	other_user_id, other_id_err := uuid.Parse("")
+	if other_id_err != nil {
+		fmt.Println(other_id_err)
+		return
+	}
 
 	row := model.CreateLike{
 		UserID:      my_user_id,

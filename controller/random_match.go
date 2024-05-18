@@ -12,8 +12,8 @@ import (
 func Random_Match(w http.ResponseWriter, r *http.Request) {
 	supabase, _ := supabase.GetClient()
 
-	// 自分のidを除外するため, 一旦固定の値に
-	my_user_id := "2"
+	// 自分のidを除外する. 一旦空値に
+	my_user_id := ""
 
 	var users []model.UserRandomResponse
 
@@ -28,7 +28,6 @@ func Random_Match(w http.ResponseWriter, r *http.Request) {
 	// 何人の情報を返すか不確定, ひとまず2人のユーザー情報をランダムに抽出
 	const users_num = 2
 	var random_users []model.UserRandomResponse
-
 	for i := 0; i < users_num; i++ {
 		if len(users) == 0 {
 			break
