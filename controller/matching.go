@@ -10,29 +10,18 @@ import (
 )
 
 // ユーザーがマッチングしているか確認(互いにいいねしているか)
-func MatchingCheck() {
-	// 仮置き. 自身のIDと相手のIDの取得方法分かり次第修正.
-	my_user_id, id_err := uuid.Parse("")
-	if id_err != nil {
-		fmt.Println(id_err)
-		return
-	}
-	other_user_id, other_id_err := uuid.Parse("")
-	if other_id_err != nil {
-		fmt.Println(other_id_err)
-		return
-	}
+func MatchingCheck(user_id uuid.UUID, other_user_id uuid.UUID) {
 
 	// 片方のユーザーでチェック
 	var filtered_Likes []model.Like
 	var row_id int
-	filtered_Likes, row_id = FilterLikes(my_user_id, other_user_id)
+	filtered_Likes, row_id = FilterLikes(user_id, other_user_id)
 	fmt.Println(filtered_Likes, row_id)
 
 	// もう片方のユーザーでチェック
 	var filtered_other_Likes []model.Like
 	var other_row_id int
-	filtered_other_Likes, other_row_id = FilterLikes(other_user_id, my_user_id)
+	filtered_other_Likes, other_row_id = FilterLikes(other_user_id, user_id)
 	fmt.Println(filtered_other_Likes, other_row_id)
 
 	// 互いをいいねしていたらCreateMatchingを実行
@@ -40,7 +29,7 @@ func MatchingCheck() {
 	fmt.Println(len(filtered_Likes), len(filtered_other_Likes))
 	if len(filtered_Likes) == 1 && len(filtered_other_Likes) == 1 {
 		fmt.Println("success")
-		CreateMatching(my_user_id, other_user_id)
+		CreateMatching(user_id, other_user_id)
 		DeleteLike(row_id, other_row_id)
 	}
 }

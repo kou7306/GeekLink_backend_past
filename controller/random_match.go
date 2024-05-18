@@ -30,8 +30,10 @@ func Random_Match(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 何人の情報を返すか不確定, ひとまず2人のユーザー情報をランダムに抽出
-	const users_num = 5
+	var users_num = 5
+	if len(users) < users_num {
+		users_num = len(users)
+	}
 	var random_users []model.UserRandomResponse
 	for i := 0; i < users_num; i++ {
 		if len(users) == 0 {
