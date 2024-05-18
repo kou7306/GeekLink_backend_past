@@ -26,7 +26,10 @@ func CheckUser(c *gin.Context) {
 		return
 	}
 
-
+	type User struct {
+		UUID string `json:"uuid"`
+		Name string `json:"name"`
+	}
 
 	// UUIDを使ってユーザを検索
 	var users []User

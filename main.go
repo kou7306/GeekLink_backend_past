@@ -17,10 +17,7 @@ type WebsocketHandler struct {
 	hub *domain.Hub
 }
 
-type User struct {
-	UUID string `json:"uuid"`
-	Name string `json:"name"`
-}
+
 
 func NewWebsocketHandler(hub *domain.Hub) *WebsocketHandler {
 	return &WebsocketHandler{
