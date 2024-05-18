@@ -1,0 +1,67 @@
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	supa "github.com/nedpals/supabase-go"
+)
+
+func main() {
+	router := gin.Default()
+
+	router.GET("/update/:id", updateUser)
+
+	router.Run(":8080")
+}
+
+type User struct {
+	Name  string `json:"name"`
+	Hobby string `json:"hobby"`
+}
+
+func updateUser(c *gin.Context) {
+	supabaseUrl := ""
+	supabaseKey := ""
+	client := supa.CreateClient(supabaseUrl, supabaseKey)
+
+	userID := c.Param("id")
+	if userID == "" {
+		  c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
+			return
+	}
+
+	var inputData User
+	if err := c.ShouldBindJSON(&inputData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var existingUser User
+	err := client.DB.From("users").Select("name", "hobby").Eq("id", userID).Single(&existingUser)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedData := User{
+		Name:  inputData.Name,  
+		Hobby: inputData.Hobby, 
+	}
+
+	if updatedData.Name == "" {
+		updatedData.Name = existingUser.Name
+	}
+	if updatedData.Hobby == "" {
+		updatedData.Hobby = existingUser.Hobby
+	}
+	
+	var results map[string]interface{}
+	err := client.DB.From("users").Update(updatedData).Eq("id", userID).Execute(&results)
+	if err != nil {
+		  c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully", "results": results})
+}
