@@ -51,10 +51,10 @@ func (wh *WebsocketHandler) handleWebSocket(w http.ResponseWriter, r *http.Reque
 func main() {
 	hub := domain.NewHub()
 	go hub.RunLoop()
-	router := mux.NewRouter()
-	router.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
-	router.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
-	router.HandleFunc("/random-match", controller.Random_Match).Methods("GET")
+	r := mux.NewRouter()
+	r.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
+	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
+	r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
 	log.Println("WebSocket server started on localhost:8080")
 	// CORS設定
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
@@ -62,5 +62,5 @@ func main() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	// サーバー起動
-	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router))
+	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(r))
 }

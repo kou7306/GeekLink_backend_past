@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	UserID            string    `json:"user_id"`
@@ -59,4 +61,8 @@ type MessageUserResponse struct {
 	Age       int      `json:"age"`
 	TopTeches []string `json:"top_teches"`
 	ImageURL  string   `json:"image_url"`
+}
+
+type RequestUserID struct {
+	UUID string `json:"uuid"`
 }
