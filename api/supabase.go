@@ -16,6 +16,7 @@ func SupabaseClient() *supabase.Client {
 
 	supabaseUrl := os.Getenv("SUPABASE_URL")
 	supabaseKey := os.Getenv("SUPABASE_KEY")
+	log.Println(supabaseUrl)
 	supabase := supabase.CreateClient(supabaseUrl, supabaseKey)
 
 	return supabase
