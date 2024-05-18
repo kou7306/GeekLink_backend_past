@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	supa "github.com/nedpals/supabase-go"
@@ -43,8 +44,8 @@ type User struct {
 }
 
 func updateUser(c *gin.Context) {
-	supabaseUrl := "https://xyzjdfnpypknqjmiolzt.supabase.co"
-	supabaseKey := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5empkZm5weXBrbnFqbWlvbHp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUwNTEwMzQsImV4cCI6MjAzMDYyNzAzNH0.V4lk56W0UuJBJkXTMxNRMcdkFNdbwaimBmbf1vlrDI8"
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
 	client := supa.CreateClient(supabaseUrl, supabaseKey)
 
 	var req User
