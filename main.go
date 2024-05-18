@@ -53,15 +53,14 @@ func main() {
 	go hub.RunLoop()
 	r := mux.NewRouter()
 	r.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
-    r.HandleFunc("/getMatchingUser", api.GetMatchingUser).Methods("POST")
-    r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
-  r.HandleFunc("/random-match", controller.Random_Match).Methods("GET")
-    log.Println("WebSocket server started on localhost:8080")
-    // CORS設定
-    headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-    originsOk := handlers.AllowedOrigins([]string{"*"})
-    methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
+	r.HandleFunc("/getMatchingUser", api.GetMatchingUser).Methods("POST")
+	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
+	r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
+	log.Println("WebSocket server started on localhost:8080")
+	// CORS設定
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	// サーバー起動
 	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(r))
