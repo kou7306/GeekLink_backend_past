@@ -16,10 +16,13 @@ func GetClient() (*supabase.Client, error) {
 		log.Fatal("Error loading .env file")
 	}
 
+
+
 	supabaseURL := os.Getenv("SUPABASE_URL")
 	supabaseKey := os.Getenv("SUPABASE_KEY")
 
 	supabase := supabase.CreateClient(supabaseURL, supabaseKey)
+
 	if err != nil {
 		return nil, fmt.Errorf("cannot initialize client: %w", err)
 	}
