@@ -5,43 +5,51 @@ import (
 	"giiku5/supabase"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 // リクエストボディの構造体を定義
 type RequestBody struct {
-    UUID int `json:"uuid"`
+    UUID string `json:"uuid"`
 }
 
 type Match struct {
 	ID int `json:"id"`
-    User1ID int `json:"user1_id"`
-    User2ID int `json:"user2_id"`
+    User1ID string `json:"user1_id"`
+    User2ID string `json:"user2_id"`
+}
+
+type User struct {
+	ID string `json:"user_id"`
+	Name string `json:"name"`
+	ImgURL string `json:"img_url"`
+	Languages []string `json:"languages"`
+	Age string `json:"age"`
+	Sex string `json:"sex"`
 }
 
 func GetMatchingUser(w http.ResponseWriter, r *http.Request) {
 
-
+	
     client, err := supabase.GetClient()
     if err != nil {
         http.Error(w, "Failed to initialize Supabase client", http.StatusInternalServerError)
         return
     }
 
-	// Content-Typeのチェック
-    if r.Header.Get("Content-Type") != "application/json" {
-        http.Error(w, "Content-Type is not application/json", http.StatusUnsupportedMediaType)
-        return
-    }
+	
 
+	
     // リクエストボディの読み取り
     var requestBody RequestBody
-    decoder := json.NewDecoder(r.Body)
-    err = decoder.Decode(&requestBody)
+    // リクエストボディをデコード
+    _ = json.NewDecoder(r.Body).Decode(&requestBody)
+	
+
+    // 取得したUUIDを使用してデータベースクエリなどの処理を実行
+    log.Printf("Received UUID: %s\n", requestBody.UUID)
 
 
-
-	userid := strconv.Itoa(requestBody.UUID)
+	userid := requestBody.UUID
     var matches1 []Match
     var matches2 []Match
     var allMatches []Match
@@ -67,24 +75,50 @@ func GetMatchingUser(w http.ResponseWriter, r *http.Request) {
     // matches1とmatches2を結合
     allMatches = append(matches1, matches2...)
 
+	log.Print(allMatches)
 
-    var matchingUserIDs []int
-var matchingUserIDsBytes []byte
-for _, match := range allMatches {
-	if strconv.Itoa(match.User1ID) == userid {
-		matchingUserIDs = append(matchingUserIDs, match.User2ID)
-	} else {
-		matchingUserIDs = append(matchingUserIDs, match.User1ID)
+
+    var matchingUserIDs []string
+
+	for _, match := range allMatches {
+		if match.User1ID == userid {
+			log.Print(match.User2ID)
+			matchingUserID := match.User2ID 
+			matchingUserIDs = append(matchingUserIDs, matchingUserID)
+		} else {
+			matchingUserID := match.User1ID// Convert match.User1ID to string
+			matchingUserIDs = append(matchingUserIDs, matchingUserID)
+		}
 	}
-}
 
-matchingUserIDsBytes, err = json.Marshal(matchingUserIDs)
-if err != nil {
-	http.Error(w, "Failed to marshal matchingUserIDs", http.StatusInternalServerError)
-	return
-}
+	log.Print(matchingUserIDs)
 
-w.Header().Set("Content-Type", "application/json")
-w.WriteHeader(http.StatusOK)
-w.Write(matchingUserIDsBytes)
+	// マッチングユーザーの情報をユーザーテーブルから取得
+	var matchingUsers []User
+	for _, matchingUserID := range matchingUserIDs {
+		var matchingUser []User
+		err = client.DB.From("users").
+			Select("user_id","name").	
+			Eq("user_id", matchingUserID).
+			Execute(&matchingUser)
+
+		if err != nil {
+			log.Fatalf("Error fetching user with id %d: %v", matchingUserID, err)
+		}
+
+		matchingUsers = append(matchingUsers, matchingUser[0])
+
+	}
+
+	var matchingUserIDsBytes []byte
+
+	matchingUserIDsBytes, err = json.Marshal(matchingUsers)
+	if err != nil {
+		http.Error(w, "Failed to marshal matchingUserIDs", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(matchingUserIDsBytes)
 }

@@ -18,7 +18,6 @@ func GetClient() (*supabase.Client, error) {
 	}
 	apiURL := os.Getenv("SUPABASE_URL")
 	apiKey := os.Getenv("SUPABASE_KEY")
-	log.Printf(apiURL)
 	
 	supabase := supa.CreateClient(apiURL, apiKey)
 	if err != nil {
