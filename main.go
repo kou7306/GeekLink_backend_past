@@ -64,5 +64,5 @@ func main() {
 
 
 	// サーバー起動
-	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router))
+	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(r))
 }
