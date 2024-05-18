@@ -26,3 +26,8 @@ type DeleteLike struct {
 	LikedUserID uuid.UUID `json:"liked_user_id"`
 	CreatedAt   time.Time `json:"created_at"`
 }
+
+type RequestBody struct {
+	IDs  []string `json:"IDs"`
+	UUID string   `json:"uuid"`
+}
