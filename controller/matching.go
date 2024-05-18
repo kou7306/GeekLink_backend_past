@@ -12,12 +12,12 @@ import (
 // ユーザーがマッチングしているか確認(互いにいいねしているか)
 func MatchingCheck() {
 	// 仮置き. 自身のIDと相手のIDの取得方法分かり次第修正.
-	my_user_id, id_err := uuid.Parse("3a54e201-9341-480b-b3a6-e8a538dfec6d")
+	my_user_id, id_err := uuid.Parse("")
 	if id_err != nil {
 		fmt.Println(id_err)
 		return
 	}
-	other_user_id, other_id_err := uuid.Parse("dc1f8f58-b6bf-424a-9809-7abdbec16781")
+	other_user_id, other_id_err := uuid.Parse("")
 	if other_id_err != nil {
 		fmt.Println(other_id_err)
 		return
