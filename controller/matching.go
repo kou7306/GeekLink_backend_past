@@ -27,10 +27,12 @@ func MatchingCheck() {
 	fmt.Println(filtered_other_Likes, other_row_id)
 
 	// 互いをいいねしていたらCreateMatchingを実行
+	// 開発中のため、関数は実行しない
 	fmt.Println(len(filtered_Likes), len(filtered_other_Likes))
 	if len(filtered_Likes) == 1 && len(filtered_other_Likes) == 1 {
 		fmt.Println("success")
 		// CreateMatching(my_user_id, other_user_id)
+		// DeleteLike(row_id, other_row_id)
 	}
 }
 

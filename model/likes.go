@@ -14,3 +14,11 @@ type CreateLike struct {
 	UserID      int `json:"user_id"`
 	LikedUserID int `json:"liked_user_id"`
 }
+
+// いいね情報を削除
+type DeleteLike struct {
+	ID          int       `json:"id"`
+	UserID      int       `json:"user_id"`
+	LikedUserID int       `json:"liked_user_id"`
+	CreatedAt   time.Time `json:"created_at"`
+}
