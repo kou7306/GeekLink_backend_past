@@ -33,12 +33,14 @@ func CreateLike() {
 func DeleteLike(row_id int, other_row_id int) {
 	supabase, _ := supabase.GetClient()
 
-	err := supabase.DB.From("likes").Delete().Eq("id", strconv.Itoa(row_id))
+	var row model.DeleteLike
+	err := supabase.DB.From("likes").Delete().Eq("id", strconv.Itoa(row_id)).Execute(&row)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	other_err := supabase.DB.From("likes").Delete().Eq("id", strconv.Itoa(other_row_id))
+	var other_row model.DeleteLike
+	other_err := supabase.DB.From("likes").Delete().Eq("id", strconv.Itoa(other_row_id)).Execute(&other_row)
 	if other_err != nil {
 		fmt.Println(other_err)
 	}
