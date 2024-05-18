@@ -10,7 +10,7 @@ type Like struct {
 }
 
 // いいね情報を挿入
-type InsertLike struct {
+type CreateLike struct {
 	UserID      int `json:"user_id"`
 	LikedUserID int `json:"liked_user_id"`
 }

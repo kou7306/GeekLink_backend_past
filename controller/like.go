@@ -6,6 +6,7 @@ import (
 	"giiku5/supabase"
 )
 
+// いいね情報をデータベースに挿入
 func CreateLike() {
 	supabase, _ := supabase.GetClient()
 
@@ -13,12 +14,12 @@ func CreateLike() {
 	my_user_id := 1
 	other_user_id := 2
 
-	row := model.InsertLike{
+	row := model.CreateLike{
 		UserID:      my_user_id,
 		LikedUserID: other_user_id,
 	}
 
-	var results []model.InsertLike
+	var results []model.CreateLike
 
 	err := supabase.DB.From("likes").Insert(row).Execute(&results)
 	if err != nil {
