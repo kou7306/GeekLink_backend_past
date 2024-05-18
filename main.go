@@ -17,6 +17,11 @@ type WebsocketHandler struct {
 	hub *domain.Hub
 }
 
+type User struct {
+	UUID string `json:"uuid"`
+	Name string `json:"name"`
+}
+
 func NewWebsocketHandler(hub *domain.Hub) *WebsocketHandler {
 	return &WebsocketHandler{
 		hub: hub,
@@ -55,6 +60,7 @@ func main() {
 	router.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
 	router.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
 	router.HandleFunc("/random-match", controller.Random_Match).Methods("GET")
+	router.POST("/usercheck", handlers.CheckUser)
 	log.Println("WebSocket server started on localhost:8080")
 	// CORS設定
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
