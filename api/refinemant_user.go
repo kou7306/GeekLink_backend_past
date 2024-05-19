@@ -54,7 +54,7 @@ func getUsers(c *gin.Context) {
 	}
 
 	var users []User
-	query := client.DB.From("users").Select("*").Eq(req.Field, req.Value)
+	query := client.DB.From("users").Select("name").Eq(req.Field, req.Value)
 	err := query.Execute(&users)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
