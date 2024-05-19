@@ -8,6 +8,7 @@ import (
 	"giiku5/controller"
 	"giiku5/domain"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
@@ -57,11 +58,12 @@ func main() {
 	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
 	r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
 	log.Println("WebSocket server started on localhost:8080")
-	   // CORS設定
-	    headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	    originsOk := handlers.AllowedOrigins([]string{"https://giiku5-frontend.vercel.app","http://localhost:3000"})
-	    methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	// CORS設定
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"https://giiku5-frontend.vercel.app"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	// サーバー起動
 	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(r))
 }
+
