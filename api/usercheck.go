@@ -33,7 +33,7 @@ func CheckUser(c *gin.Context) {
 
 	// UUIDを使ってユーザを検索
 	var users []User
-	err := client.DB.From("users").Select("name").Eq("uuid", req.UUID).Execute(&users)
+	err := client.DB.From("users").Select("name").Eq("user_id", req.UUID).Execute(&users)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
