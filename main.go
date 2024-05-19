@@ -57,6 +57,7 @@ func main() {
 	router.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
 	router.HandleFunc("/random-match", controller.Random_Match).Methods("GET")
 	router.POST("/usercheck", handlers.CheckUser)
+	router.POST("/users", api.getUsers) 
 	log.Println("WebSocket server started on localhost:8080")
 	// CORS設定
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
