@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -55,6 +56,16 @@ func main() {
 	r.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
 	r.HandleFunc("/getMatchingUser", api.GetMatchingUser).Methods("POST")
     r.HandleFunc("/getUserData", api.GetUserData).Methods("POST")
+    r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        // JSONデータを作成
+        jsonData := map[string]interface{}{
+            "message": "Hello, JSON!",
+        }
+    
+        // JSONデータをレスポンスとして返す
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(jsonData)
+    }).Methods("GET")
 	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
     r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
     r.HandleFunc("/random-match", func(w http.ResponseWriter, r *http.Request) {
