@@ -56,7 +56,11 @@ func main() {
 	r.HandleFunc("/getMatchingUser", api.GetMatchingUser).Methods("POST")
     r.HandleFunc("/getUserData", api.GetUserData).Methods("POST")
 	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
-	r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
+    r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
+    r.HandleFunc("/random-match", func(w http.ResponseWriter, r *http.Request) {
+        // OPTIONSメソッドの処理
+        w.WriteHeader(http.StatusOK)
+    }).Methods("OPTIONS")
 	log.Println("WebSocket server started on localhost:8080")
 	// CORS設定
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
