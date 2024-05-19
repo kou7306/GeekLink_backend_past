@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"giiku5/model"
 	"giiku5/supabase"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -16,8 +15,6 @@ func Random_Match(w http.ResponseWriter, r *http.Request) {
 
 	var body model.RequestUserID
 	_ = json.NewDecoder(r.Body).Decode(&body)
-
-	log.Printf("Received UUID: %s\n", body.UUID)
 
 	user_id := body.UUID
 	var users []model.UserRandomResponse
