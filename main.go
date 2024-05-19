@@ -73,9 +73,10 @@ func main() {
         w.WriteHeader(http.StatusOK)
     }).Methods("OPTIONS")
 	log.Println("WebSocket server started on localhost:8080")
+    r.HandleFunc("/createlike", controller.CreateLike).Methods("POST")
 	// CORS設定
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"https://giiku5-frontend.vercel.app"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	// サーバー起動

@@ -33,8 +33,12 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Failed to marshal messages to JSON", http.StatusInternalServerError)
 				return
 		}
+   // CORSヘッダーを追加
+   w.Header().Set("Access-Control-Allow-Origin", "https://giiku5-frontend.vercel.app")
+   w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+   w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(messagesJSON)
+   w.Header().Set("Content-Type", "application/json")
+   w.WriteHeader(http.StatusOK)
+   w.Write(messagesJSON)
 }
