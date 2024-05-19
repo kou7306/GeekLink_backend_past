@@ -16,12 +16,12 @@ type UserData struct {
 	Sex string `json:"sex"`
 	Age string `json:"age"`
 	Place string `json:"place"`
-	TopTeches string `json:"top_teches"`
-	Teches string `json:"teches"`
+	TopTeches []string `json:"top_teches"`
+	Teches []string `json:"teches"`
 	Hobby string `json:"hobby"`
-	Occupation string `json:"occupation"`
+	Occupation []string `json:"occupation"`
 	Affiliation string `json:"affiliation"`
-	Qualification string `json:"qualification"`
+	Qualification []string `json:"qualification"`
 	Editor string `json:"editor"`
 	Github string `json:"github"`
 	Twitter string `json:"twitter"`
@@ -30,9 +30,9 @@ type UserData struct {
 	Message string `json:"message"`
 	Portfolio string `json:"portfolio"`
 	Graduate string `json:"graduate"`
-	DesiredOcupation string `json:"desiredOccupation"`
+	DesiredOccupation string `json:"desiredOccupation"`
 	Faculty string `json:"faculty"`
-	Experience string `json:"experience"`
+	Experience []string `json:"experience"`
 	ImageURL string `json:"image_url"`
 } 
 
