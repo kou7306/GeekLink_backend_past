@@ -8,15 +8,6 @@ import (
 	supa "github.com/nedpals/supabase-go"
 )
 
-func main() {
-	router := gin.Default()
-
-	router.GET("/update", updateUser)
-
-	router.Run(":8080")
-}
-
-
 func updateUser(c *gin.Context) {
 	supabaseUrl := os.Getenv("SUPABASE_URL")
 	supabaseKey := os.Getenv("SUPABASE_KEY")
