@@ -66,12 +66,10 @@ func main() {
         w.Header().Set("Content-Type", "application/json")
         json.NewEncoder(w).Encode(jsonData)
     }).Methods("GET")
+
+
 	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
-    r.HandleFunc("/random-match", controller.Random_Match).Methods("POST")
-    r.HandleFunc("/random-match", func(w http.ResponseWriter, r *http.Request) {
-        // OPTIONSメソッドの処理
-        w.WriteHeader(http.StatusOK)
-    }).Methods("OPTIONS")
+    r.HandleFunc("/random-match", controller.Random_Match).Methods("POST", "OPTIONS")
 	log.Println("WebSocket server started on localhost:8080")
     r.HandleFunc("/createlike", controller.CreateLike).Methods("POST")
 	// CORS設定
