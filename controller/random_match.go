@@ -11,8 +11,12 @@ import (
 )
 
 func Random_Match(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	// Handle preflight request
 	if r.Method == http.MethodOptions {
+
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -51,9 +55,7 @@ func Random_Match(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonRandomUsers)
 }
