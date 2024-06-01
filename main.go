@@ -72,6 +72,24 @@ func main() {
     r.HandleFunc("/random-match", controller.Random_Match).Methods("POST", "OPTIONS")
 	log.Println("WebSocket server started on localhost:8080")
     r.HandleFunc("/createlike", controller.CreateLike).Methods("POST")
+	r.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			// JSONデータを作成
+			jsonData := map[string]interface{}{
+				"message": "Hello",
+			}
+	
+			// JSONデータをレスポンスとして返す
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(jsonData)
+		} else {
+			// Method not allowed
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
+		}
+    }).Methods("POST")
+
 	// CORS設定
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
