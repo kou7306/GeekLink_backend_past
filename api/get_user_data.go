@@ -1,28 +1,28 @@
 package api
 
 import (
-	"encoding/json"
 	"giiku5/model"
 	"giiku5/supabase"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func GetUserData(w http.ResponseWriter, r *http.Request) {
-
+func GetUserData(c *gin.Context) {
 	log.Printf("GetUserData")
 	client, err := supabase.GetClient()
 	if err != nil {
-		http.Error(w, "Failed to initialize Supabase client", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Supabase client"})
 		return
 	}
 
-	// リクエストボディの読み取り
-	var requestBody RequestBody
-	// リクエストボディをデコード
-	_ = json.NewDecoder(r.Body).Decode(&requestBody)
+	var requestBody model.RequestBody
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	// 取得したUUIDを使用してデータベースクエリなどの処理を実行
 	log.Printf("Received UUID: %s\n", requestBody.UUID)
 
 	userid := requestBody.UUID
@@ -30,19 +30,16 @@ func GetUserData(w http.ResponseWriter, r *http.Request) {
 	var userData []model.User
 	err = client.DB.From("users").Select("*").Eq("user_id", userid).Execute(&userData)
 	if err != nil {
-		panic(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query database"})
+		return
 	}
 
 	log.Printf("%+v", userData)
 
-	// Convert messages to JSON byte slice
-	userDataJSON, err := json.Marshal(userData[0])
-	if err != nil {
-		http.Error(w, "Failed to marshal userData to JSON", http.StatusInternalServerError)
+	if len(userData) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(userDataJSON)
+	c.JSON(http.StatusOK, userData[0])
 }

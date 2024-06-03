@@ -1,15 +1,16 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"giiku5/api"
 	"giiku5/controller"
 	"giiku5/domain"
 
-	"github.com/gorilla/handlers"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
@@ -52,50 +53,63 @@ func (wh *WebsocketHandler) handleWebSocket(w http.ResponseWriter, r *http.Reque
 func main() {
 	hub := domain.NewHub()
 	go hub.RunLoop()
-	r := mux.NewRouter()
-	r.HandleFunc("/getMessage/{conversationId}", api.GetMessage).Methods("GET")
-	r.HandleFunc("/getMatchingUser", api.GetMatchingUser).Methods("POST")
-    r.HandleFunc("/getUserData", api.GetUserData).Methods("POST")
-    r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        // JSONデータを作成
-        jsonData := map[string]interface{}{
-            "message": "Hello, JSON!",
-        }
-    
-        // JSONデータをレスポンスとして返す
-        w.Header().Set("Content-Type", "application/json")
-        json.NewEncoder(w).Encode(jsonData)
-    }).Methods("GET")
-
-
-	r.HandleFunc("/ws/{conversationId}", NewWebsocketHandler(hub).handleWebSocket)
-    r.HandleFunc("/random-match", controller.Random_Match).Methods("POST", "OPTIONS")
-	log.Println("WebSocket server started on localhost:8080")
-    r.HandleFunc("/createlike", controller.CreateLike).Methods("POST")
-	r.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			// JSONデータを作成
-			jsonData := map[string]interface{}{
-				"message": "Hello",
-			}
-	
-			// JSONデータをレスポンスとして返す
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(jsonData)
-		} else {
-			// Method not allowed
-			w.Header().Set("Allow", "POST")
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
-		}
-    }).Methods("POST")
-
+	r := gin.Default()
 	// CORS設定
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"https://giiku5-frontend.vercel.app", "http://localhost:3000"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"https://giiku5-frontend.vercel.app", 
+			"http://localhost:3000",
+		},
+		AllowMethods: []string{
+			"POST",
+			"GET",
+			"OPTIONS",
+		},
+		AllowHeaders: []string{
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers",
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"Authorization",
+		},
+		AllowCredentials: true,
+		MaxAge: 24 * time.Hour,
+	}))
+
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello, world!")
+	})
+	
+
+	// ginのルートパスのコールバックをラップしてhttp.HandlerFuncをgin.HandlerFuncに変換
+	r.GET("/ws/:conversationId", func(c *gin.Context) {
+		conversationId := c.Param("conversationId")
+		w := c.Writer
+		r := c.Request
+		vars := map[string]string{"conversationId": conversationId}
+
+		mux.SetURLVars(r, vars)
+		NewWebsocketHandler(hub).handleWebSocket(w, r)
+	})
+
+	r.GET("/getMessage/:conversationId", api.GetMessage)
+	r.POST("/getMatchingUser", api.GetMatchingUser)
+	r.POST("/getUserData", api.GetUserData)
+
+	r.POST("/random-match", controller.RandomMatch)
+	r.POST("/createlike", controller.CreateLike)
+
+	r.POST("/test", func(c *gin.Context) {
+		// JSONデータを作成
+		jsonData := map[string]interface{}{
+			"message": "Hello",
+		}
+
+		// JSONデータをレスポンスとして返す
+		c.JSON(http.StatusOK, jsonData)
+	})
 
 	// サーバー起動
-	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(r))
+	r.Run(":8080")
 }
-

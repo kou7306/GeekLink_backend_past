@@ -1,10 +1,11 @@
 package api
 
 import (
-	"encoding/json"
 	"giiku5/supabase"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // リクエストボディの構造体を定義
@@ -27,18 +28,19 @@ type User struct {
 	Sex       string   `json:"sex"`
 }
 
-func GetMatchingUser(w http.ResponseWriter, r *http.Request) {
-
+func GetMatchingUser(c *gin.Context) {
 	client, err := supabase.GetClient()
 	if err != nil {
-		http.Error(w, "Failed to initialize Supabase client", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Supabase client"})
 		return
 	}
 
 	// リクエストボディの読み取り
 	var requestBody RequestBody
-	// リクエストボディをデコード
-	_ = json.NewDecoder(r.Body).Decode(&requestBody)
+	if err := c.BindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
 
 	// 取得したUUIDを使用してデータベースクエリなどの処理を実行
 	log.Printf("Received UUID: %s\n", requestBody.UUID)
@@ -79,7 +81,7 @@ func GetMatchingUser(w http.ResponseWriter, r *http.Request) {
 			matchingUserID := match.User2ID
 			matchingUserIDs = append(matchingUserIDs, matchingUserID)
 		} else {
-			matchingUserID := match.User1ID // Convert match.User1ID to string
+			matchingUserID := match.User1ID
 			matchingUserIDs = append(matchingUserIDs, matchingUserID)
 		}
 	}
@@ -100,18 +102,8 @@ func GetMatchingUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		matchingUsers = append(matchingUsers, matchingUser[0])
-
 	}
 
-	var matchingUserIDsBytes []byte
-
-	matchingUserIDsBytes, err = json.Marshal(matchingUsers)
-	if err != nil {
-		http.Error(w, "Failed to marshal matchingUserIDs", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(matchingUserIDsBytes)
+	c.JSON(http.StatusOK, matchingUsers)
 }
+

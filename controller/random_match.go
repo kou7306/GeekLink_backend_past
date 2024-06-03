@@ -1,30 +1,23 @@
 package controller
 
 import (
-	"encoding/json"
-	"fmt"
 	"giiku5/model"
 	"giiku5/supabase"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Random_Match(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "https://giiku5-frontend.vercel.app")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.Header().Set("Content-Type", "application/json")
-	// Handle preflight request
-	if r.Method == http.MethodOptions {
-
-		w.WriteHeader(http.StatusOK)
-		return
-	}
+func RandomMatch(c *gin.Context) {
 	supabase, _ := supabase.GetClient()
 
 	var body model.RequestUserID
-	_ = json.NewDecoder(r.Body).Decode(&body)
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	user_id := body.UUID
 	var users []model.UserRandomResponse
@@ -33,14 +26,15 @@ func Random_Match(w http.ResponseWriter, r *http.Request) {
 
 	err := supabase.DB.From("users").Select("*").Filter("user_id", "neq", user_id).Execute(&users)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var users_num = 5
+	users_num := 5
 	if len(users) < users_num {
 		users_num = len(users)
 	}
+
 	var random_users []model.UserRandomResponse
 	for i := 0; i < users_num; i++ {
 		if len(users) == 0 {
@@ -48,15 +42,8 @@ func Random_Match(w http.ResponseWriter, r *http.Request) {
 		}
 		index := rand.Intn(len(users))
 		random_users = append(random_users, users[index])
-
 		users = append(users[:index], users[index+1:]...)
 	}
 
-	jsonRandomUsers, err := json.Marshal(random_users)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonRandomUsers)
+	c.JSON(http.StatusOK, random_users)
 }
