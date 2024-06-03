@@ -1,44 +1,31 @@
 package api
 
 import (
-	"encoding/json"
 	"giiku5/supabase"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func GetMessage(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    conversationID := vars["conversationId"]
+func GetMessage(c *gin.Context) {
+	conversationID := c.Param("conversationId")
 
-    client, err := supabase.GetClient()
-    if err != nil {
-        http.Error(w, "Failed to initialize Supabase client", http.StatusInternalServerError)
-        return
-    }
+	client, err := supabase.GetClient()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Supabase client"})
+		return
+	}
 
 	var messages []map[string]interface{}
 	err = client.DB.From("messages").Select("*").Eq("conversation_id", conversationID).Execute(&messages)
-		if err != nil {
-		  panic(err)
-		}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query database"})
+		return
+	}
 
-		log.Printf("%+v", messages)
+	log.Printf("%+v", messages)
 
-		// Convert messages to JSON byte slice
-		messagesJSON, err := json.Marshal(messages)
-		if err != nil {
-				http.Error(w, "Failed to marshal messages to JSON", http.StatusInternalServerError)
-				return
-		}
-   // CORSヘッダーを追加
-   w.Header().Set("Access-Control-Allow-Origin", "https://giiku5-frontend.vercel.app")
-   w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-   w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-   w.Header().Set("Content-Type", "application/json")
-   w.WriteHeader(http.StatusOK)
-   w.Write(messagesJSON)
+	// Convert messages to JSON byte slice and send as response
+	c.JSON(http.StatusOK, messages)
 }

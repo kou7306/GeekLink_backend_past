@@ -1,43 +1,43 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"giiku5/model"
 	"giiku5/supabase"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/google/uuid"
 )
 
 // いいね情報をデータベースに挿入
-func CreateLike(w http.ResponseWriter, r *http.Request) {
+func CreateLike(c *gin.Context) {
 	supabase, _ := supabase.GetClient()
 
 	var data model.RequestBody
-	body_err := json.NewDecoder(r.Body).Decode(&data)
-	if body_err != nil {
-		http.Error(w, body_err.Error(), http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	fmt.Println("IDs:", data.IDs)
 	fmt.Println("UUID:", data.UUID)
 
-	user_id, id_err := uuid.Parse(data.UUID)
-	if id_err != nil {
-		fmt.Println(id_err)
+	user_id, err := uuid.Parse(data.UUID)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID"})
 		return
-
 	}
 
 	var results []model.CreateLike
 
 	for _, id := range data.IDs {
-		other_user_id, other_id_err := uuid.Parse(id)
-		if other_id_err != nil {
-			fmt.Println(other_id_err)
+		other_user_id, err := uuid.Parse(id)
+		if err != nil {
+			fmt.Println(err)
 			continue
 		}
 		row := model.CreateLike{
@@ -45,7 +45,7 @@ func CreateLike(w http.ResponseWriter, r *http.Request) {
 			LikedUserID: other_user_id,
 		}
 
-		err := supabase.DB.From("likes").Insert(row).Execute(&results)
+		err = supabase.DB.From("likes").Insert(row).Execute(&results)
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -53,6 +53,7 @@ func CreateLike(w http.ResponseWriter, r *http.Request) {
 		MatchingCheck(user_id, other_user_id)
 	}
 
+	c.JSON(http.StatusOK, gin.H{"message": "Likes created successfully"})
 }
 
 // マッチングしたら対象のいいね情報を削除
