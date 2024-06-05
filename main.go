@@ -57,7 +57,7 @@ func main() {
 	// CORS設定
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"https://giiku5-frontend.vercel.app", 
+			"https://giiku5-frontend.vercel.app",
 			"http://localhost:3000",
 		},
 		AllowMethods: []string{
@@ -74,13 +74,12 @@ func main() {
 			"Authorization",
 		},
 		AllowCredentials: true,
-		MaxAge: 24 * time.Hour,
+		MaxAge:           24 * time.Hour,
 	}))
 
 	r.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello, world!")
 	})
-	
 
 	// ginのルートパスのコールバックをラップしてhttp.HandlerFuncをgin.HandlerFuncに変換
 	r.GET("/ws/:conversationId", func(c *gin.Context) {
@@ -95,7 +94,7 @@ func main() {
 
 	r.GET("/getMessage/:conversationId", api.GetMessage)
 	r.POST("/getMatchingUser", api.GetMatchingUser)
-	r.POST("/getUserData", api.GetUserData)
+	r.GET("/user/:user_id", api.GetUserData)
 
 	r.POST("/random-match", controller.RandomMatch)
 	r.POST("/createlike", controller.CreateLike)

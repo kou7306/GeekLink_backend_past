@@ -21,7 +21,7 @@ type User struct {
 	Message           string    `json:"message"`            // メッセージ
 	Portfolio         string    `json:"portfolio"`          // ポートフォリオ
 	Graduate          string    `json:"graduate"`           // 卒業年度
-	DesiredOccupation string    `json:"desired_occupation"` // 希望職種
+	DesiredOccupation string    `json:"desiredOccupation"` // 希望職種
 	Faculty           string    `json:"faculty"`            // 学部
 	Experience        []string  `json:"experience"`         // 経験
 	GitHub            string    `json:"github"`
