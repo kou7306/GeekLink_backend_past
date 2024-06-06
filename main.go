@@ -72,7 +72,6 @@ func main() {
 			"Content-Length",
 			"Accept-Encoding",
 			"Authorization",
-			"Origin",
 		},
 		AllowCredentials: true,
 		MaxAge:           24 * time.Hour,
