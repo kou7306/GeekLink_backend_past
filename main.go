@@ -56,10 +56,7 @@ func main() {
 	r := gin.Default()
 	// CORS設定
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"https://giiku5-frontend.vercel.app",
-			"http://localhost:3000",
-		},
+		AllowAllOrigins: true, // すべてのオリジンを許可
 		AllowMethods: []string{
 			"POST",
 			"GET",
