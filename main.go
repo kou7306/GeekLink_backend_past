@@ -57,7 +57,7 @@ func main() {
 	// CORS設定
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"https://giiku5-frontend.vercel.app:3000",
+			"https://giiku5-frontend.vercel.app",
 		        "http://localhost:3000",
 		},
 		AllowMethods: []string{
@@ -72,6 +72,7 @@ func main() {
 			"Content-Length",
 			"Accept-Encoding",
 			"Authorization",
+			"Origin",
 		},
 		AllowCredentials: true,
 		MaxAge:           24 * time.Hour,
