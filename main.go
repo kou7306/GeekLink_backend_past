@@ -58,7 +58,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"https://giiku5-frontend.vercel.app",
-		        "http://localhost:3000",
+			"http://localhost:3000",
 		},
 		AllowMethods: []string{
 			"POST",
@@ -98,6 +98,8 @@ func main() {
 
 	r.POST("/random-match", controller.RandomMatch)
 	r.POST("/createlike", controller.CreateLike)
+
+	// r.POST("/liked", controller.GetLikedUser)
 
 	r.POST("/test", func(c *gin.Context) {
 		// JSONデータを作成
