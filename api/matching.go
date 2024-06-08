@@ -1,4 +1,4 @@
-package controller
+package api
 
 import (
 	"fmt"
@@ -16,19 +16,16 @@ func MatchingCheck(user_id uuid.UUID, other_user_id uuid.UUID) {
 	var filtered_Likes []model.Like
 	var row_id int
 	filtered_Likes, row_id = FilterLikes(user_id, other_user_id)
-	fmt.Println(filtered_Likes, row_id)
 
 	// もう片方のユーザーでチェック
 	var filtered_other_Likes []model.Like
 	var other_row_id int
 	filtered_other_Likes, other_row_id = FilterLikes(other_user_id, user_id)
-	fmt.Println(filtered_other_Likes, other_row_id)
 
 	// 互いをいいねしていたらCreateMatchingを実行
-	// 開発中のため、関数は実行しない
 	fmt.Println(len(filtered_Likes), len(filtered_other_Likes))
 	if len(filtered_Likes) == 1 && len(filtered_other_Likes) == 1 {
-		fmt.Println("success")
+		fmt.Println("matching successful")
 		CreateMatching(user_id, other_user_id)
 		DeleteLike(row_id, other_row_id)
 	}

@@ -35,7 +35,7 @@ type User struct {
 
 // ホーム画面で返すユーザー情報
 type TopUserResponse struct {
-	UserID    int      `json:"user_id"`
+	UserID    string   `json:"user_id"`
 	Name      string   `json:"name"`
 	TopTeches []string `json:"top_teches"`
 	ImageURL  string   `json:"image_url"`
