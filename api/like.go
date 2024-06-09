@@ -1,4 +1,4 @@
-package controller
+package api
 
 import (
 	"fmt"
@@ -21,9 +21,6 @@ func CreateLike(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	fmt.Println("IDs:", data.IDs)
-	fmt.Println("UUID:", data.UUID)
 
 	user_id, err := uuid.Parse(data.UUID)
 	if err != nil {
@@ -56,7 +53,7 @@ func CreateLike(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Likes created successfully"})
 }
 
-// マッチングしたら対象のいいね情報を削除
+// マッチングしたら対象のいいねカラムを削除
 func DeleteLike(row_id int, other_row_id int) {
 	supabase, _ := supabase.GetClient()
 

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"giiku5/api"
-	"giiku5/controller"
 	"giiku5/domain"
 
 	"github.com/gin-contrib/cors"
@@ -96,8 +95,8 @@ func main() {
 	r.POST("/getMatchingUser", api.GetMatchingUser)
 	r.GET("/user/:user_id", api.GetUserData)
 
-	r.POST("/random-match", controller.RandomMatch)
-	r.POST("/createlike", controller.CreateLike)
+	r.POST("/random-match", api.RandomMatch)
+	r.POST("/createlike", api.CreateLike)
 
 	// r.POST("/liked", controller.GetLikedUser)
 

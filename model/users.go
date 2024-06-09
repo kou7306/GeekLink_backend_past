@@ -35,7 +35,7 @@ type User struct {
 
 // ホーム画面で返すユーザー情報
 type TopUserResponse struct {
-	UserID    int      `json:"user_id"`
+	UserID    string   `json:"user_id"`
 	Name      string   `json:"name"`
 	TopTeches []string `json:"top_teches"`
 	ImageURL  string   `json:"image_url"`
@@ -73,6 +73,12 @@ type UserLikedResponse struct {
 // いいねされた人のID
 type GetUserLikedID struct {
 	UserID string `json:"user_id"`
+}
+
+// マッチングしている人の情報を取得
+type GetMatchingUser struct {
+	User1ID string `json:"user1_id"`
+	User2ID string `json:"user2_id"`
 }
 
 type RequestUserID struct {
