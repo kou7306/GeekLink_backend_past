@@ -30,11 +30,10 @@ func RandomMatch(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println(len(users))
+
 	// マッチングしている相手は除外する
 	users = DeleteMatchingUser(user_id, users)
 
-	log.Println(len(users))
 	// ランダムマッチで表示する相手の人数
 	users_num := 5
 	if len(users) < users_num {
@@ -87,7 +86,7 @@ func DeleteMatchingUser(user_id string, users []model.UserRandomResponse) []mode
 			MatchIDs = append(MatchIDs, matchingUserID)
 		}
 	}
-	log.Println(MatchIDs)
+
 	// MatchIDsに一致するUserIDを持つusersを削除
 	for _, matchID := range MatchIDs {
 		for i := 0; i < len(users); i++ {
