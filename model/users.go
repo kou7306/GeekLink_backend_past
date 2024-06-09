@@ -75,6 +75,12 @@ type GetUserLikedID struct {
 	UserID string `json:"user_id"`
 }
 
+// マッチングしている人の情報を取得
+type GetMatchingUser struct {
+	User1ID string `json:"user1_id"`
+	User2ID string `json:"user2_id"`
+}
+
 type RequestUserID struct {
 	UUID string `json:"uuid"`
 }
