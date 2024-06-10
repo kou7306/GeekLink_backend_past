@@ -6,24 +6,24 @@ import (
 
 type User struct {
 	UserID            string    `json:"user_id"`
-	Name              string    `json:"name"`               // 名前
-	Sex               string    `json:"sex"`                // 性別
-	Age               string    `json:"age"`                // 年齢
-	Place             string    `json:"place"`              // 在住
-	TopTeches         []string  `json:"top_teches"`         // トップスキル
-	Teches            []string  `json:"teches"`             // スキル
-	Hobby             string    `json:"hobby"`              // 趣味
-	Occupation        string    `json:"occupation"`         // 職種
-	Affiliation       string    `json:"affiliation"`        // 所属
-	Qualification     []string  `json:"qualification"`      // 資格
-	Editor            string    `json:"editor"`             // エディタ
-	ImageURL          string    `json:"image_url"`          // アイコン画像
-	Message           string    `json:"message"`            // メッセージ
-	Portfolio         string    `json:"portfolio"`          // ポートフォリオ
-	Graduate          string    `json:"graduate"`           // 卒業年度
-	DesiredOccupation string    `json:"desired_occupation"` // 希望職種
-	Faculty           string    `json:"faculty"`            // 学部
-	Experience        []string  `json:"experience"`         // 経験
+	Name              string    `json:"name"`              // 名前
+	Sex               string    `json:"sex"`               // 性別
+	Age               string    `json:"age"`               // 年齢
+	Place             string    `json:"place"`             // 在住
+	TopTeches         []string  `json:"top_teches"`        // トップスキル
+	Teches            []string  `json:"teches"`            // スキル
+	Hobby             string    `json:"hobby"`             // 趣味
+	Occupation        string    `json:"occupation"`        // 職種
+	Affiliation       string    `json:"affiliation"`       // 所属
+	Qualification     []string  `json:"qualification"`     // 資格
+	Editor            string    `json:"editor"`            // エディタ
+	ImageURL          string    `json:"image_url"`         // アイコン画像
+	Message           string    `json:"message"`           // メッセージ
+	Portfolio         string    `json:"portfolio"`         // ポートフォリオ
+	Graduate          string    `json:"graduate"`          // 卒業年度
+	DesiredOccupation string    `json:"desiredOccupation"` // 希望職種
+	Faculty           string    `json:"faculty"`           // 学部
+	Experience        []string  `json:"experience"`        // 経験
 	GitHub            string    `json:"github"`
 	Twitter           string    `json:"twitter"`
 	Qiita             string    `json:"qiita"`
@@ -35,7 +35,7 @@ type User struct {
 
 // ホーム画面で返すユーザー情報
 type TopUserResponse struct {
-	UserID    int      `json:"user_id"`
+	UserID    string   `json:"user_id"`
 	Name      string   `json:"name"`
 	TopTeches []string `json:"top_teches"`
 	ImageURL  string   `json:"image_url"`
@@ -61,6 +61,24 @@ type MessageUserResponse struct {
 	Age       string   `json:"age"`
 	TopTeches []string `json:"top_teches"`
 	ImageURL  string   `json:"image_url"`
+}
+
+// いいねされた人とマッチングしている人一覧で返すユーザー情報
+type UserLikedResponse struct {
+	UserID   string `json:"user_id"`
+	Name     string `json:"name"`
+	ImageURL string `json:"image_url"`
+}
+
+// いいねされた人のID
+type GetUserLikedID struct {
+	UserID string `json:"user_id"`
+}
+
+// マッチングしている人の情報を取得
+type GetMatchingUser struct {
+	User1ID string `json:"user1_id"`
+	User2ID string `json:"user2_id"`
 }
 
 type RequestUserID struct {
