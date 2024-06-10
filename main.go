@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"giiku5/api"
@@ -114,7 +115,7 @@ func main() {
 		// 	log.Fatal(err)
 		// }
 	
-		// supabaseUrl := os.Getenv("SUPABASE_URL")
+		supabaseUrl := os.Getenv("SUPABASE_URL")
 		// supabaseKey := os.Getenv("SUPABASE_KEY")
 		// log.Println(supabaseUrl)
 		// log.Println(supabaseKey)
