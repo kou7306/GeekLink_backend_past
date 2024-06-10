@@ -63,9 +63,6 @@ func main() {
 			"POST",
 			"GET",
 			"OPTIONS",
-			"PUT",
-			"DELETE",
-			"PATCH",
 		},
 		AllowHeaders: []string{
 			"Access-Control-Allow-Credentials",
@@ -74,7 +71,6 @@ func main() {
 			"Content-Length",
 			"Accept-Encoding",
 			"Authorization",
-			"Origin",
 		},
 		AllowCredentials: true,
 		MaxAge:           24 * time.Hour,
@@ -104,11 +100,16 @@ func main() {
 
 	// r.POST("/liked", controller.GetLikedUser)
 
-	r.POST("/test", controller.Test)
+	r.POST("/test", func(c *gin.Context) {
+		// JSONデータを作成
+		jsonData := map[string]interface{}{
+			"message": "Hello",
+		}
+
+		// JSONデータをレスポンスとして返す
+		c.JSON(http.StatusOK, jsonData)
+	})
 
 	// サーバー起動
 	r.Run(":8080")
 }
-
-
-//CORSそもそも環境変数のせいかも
