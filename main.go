@@ -55,14 +55,18 @@ func main() {
 	r := gin.Default()
 	// CORS設定
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"https://giiku5-frontend.vercel.app",
-			"http://localhost:3000",
-		},
+		// AllowOrigins: []string{
+		// 	"https://giiku5-frontend.vercel.app",
+		// 	"http://localhost:3000",
+		// },
+		AllowAllOrigins: true,
 		AllowMethods: []string{
 			"POST",
 			"GET",
 			"OPTIONS",
+			"PUT",
+			"DELETE",
+			"PATCH",
 		},
 		AllowHeaders: []string{
 			"Access-Control-Allow-Credentials",
@@ -72,6 +76,9 @@ func main() {
 			"Accept-Encoding",
 			"Authorization",
 			"Origin",
+			"X-Requested-With",
+			"X-Csrftoken",
+			"Accept",
 		},
 		AllowCredentials: true,
 		MaxAge:           24 * time.Hour,
