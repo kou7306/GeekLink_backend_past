@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/joho/godotenv"
 )
 
 type WebsocketHandler struct {
@@ -111,10 +110,7 @@ func main() {
 	// r.POST("/liked", controller.GetLikedUser)
 
 	r.POST("/test", func(c *gin.Context) {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal(err)
-		}
+
 	
 		supabaseUrl := os.Getenv("SUPABASE_URL")
 		if supabaseUrl == "" {
