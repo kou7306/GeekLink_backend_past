@@ -71,6 +71,7 @@ func main() {
 			"Content-Length",
 			"Accept-Encoding",
 			"Authorization",
+			"Origin",
 		},
 		AllowCredentials: true,
 		MaxAge:           24 * time.Hour,
@@ -100,15 +101,7 @@ func main() {
 
 	// r.POST("/liked", controller.GetLikedUser)
 
-	r.POST("/test", func(c *gin.Context) {
-		// JSONデータを作成
-		jsonData := map[string]interface{}{
-			"message": "Hello",
-		}
-
-		// JSONデータをレスポンスとして返す
-		c.JSON(http.StatusOK, jsonData)
-	})
+	r.POST("/test", api.Test)
 
 	// サーバー起動
 	r.Run(":8080")
