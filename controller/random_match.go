@@ -8,9 +8,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/labstack/gommon/log"
 )
 
 func RandomMatch(c *gin.Context) {
+
+	
 	supabase, _ := supabase.GetClient()
 
 	var body model.RequestUserID
@@ -18,6 +21,8 @@ func RandomMatch(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	log.Print("RandomMatch")
 
 	user_id := body.UUID
 	var users []model.UserRandomResponse
