@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"giiku5/api"
@@ -13,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/joho/godotenv"
 )
 
 type WebsocketHandler struct {
@@ -111,20 +109,20 @@ func main() {
 	// r.POST("/liked", controller.GetLikedUser)
 
 	r.POST("/test", func(c *gin.Context) {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal(err)
-		}
+		// err := godotenv.Load()
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 	
-		supabaseUrl := os.Getenv("SUPABASE_URL")
-		supabaseKey := os.Getenv("SUPABASE_KEY")
-		log.Println(supabaseUrl)
-		log.Println(supabaseKey)
+		// supabaseUrl := os.Getenv("SUPABASE_URL")
+		// supabaseKey := os.Getenv("SUPABASE_KEY")
+		// log.Println(supabaseUrl)
+		// log.Println(supabaseKey)
 	
 	
 		// JSONデータを作成
 		jsonData := map[string]interface{}{
-			"message": supabaseUrl + supabaseKey,
+			"message": "hello",
 		}
 		// JSONデータをレスポンスとして返す
 		c.JSON(http.StatusOK, jsonData)
