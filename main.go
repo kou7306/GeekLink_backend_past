@@ -116,14 +116,17 @@ func main() {
 		// }
 	
 		supabaseUrl := os.Getenv("SUPABASE_URL")
+		if supabaseUrl == "" {
+			supabaseUrl = ""
+		}
 		// supabaseKey := os.Getenv("SUPABASE_KEY")
 		// log.Println(supabaseUrl)
 		// log.Println(supabaseKey)
-	
-	
+
+
 		// JSONデータを作成
 		jsonData := map[string]interface{}{
-			"message": "hello",
+			"message": "hello" + supabaseUrl,
 		}
 		// JSONデータをレスポンスとして返す
 		c.JSON(http.StatusOK, jsonData)
